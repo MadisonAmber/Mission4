@@ -26,17 +26,20 @@ namespace Mission4.Controllers
             return View();
         }
         
+        // Show MyPodcasts page
         public IActionResult MyPodcasts()
         {
             return View();
         }
 
+        // Get form for movies
         [HttpGet]
         public IActionResult RatingForm()
         {
             return View();
         }
 
+        // Post form, saved to database
         [HttpPost]
         public IActionResult RatingForm(Movie movie)
         {
