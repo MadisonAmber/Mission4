@@ -43,9 +43,16 @@ namespace Mission4.Controllers
         [HttpPost]
         public IActionResult RatingForm(Movie movie)
         {
-            movieContext.Add(movie);
-            movieContext.SaveChanges();
-            return View("Success", movie);
+            if (ModelState.IsValid)
+            {
+                movieContext.Add(movie);
+                movieContext.SaveChanges();
+                return View("Success", movie);
+            }
+            else
+            {
+                return View();
+            }
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
