@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Mission4.Models;
 using System;
@@ -25,7 +26,7 @@ namespace Mission4.Controllers
         {
             return View();
         }
-        
+
         // Show MyPodcasts page
         public IActionResult MyPodcasts()
         {
@@ -36,6 +37,9 @@ namespace Mission4.Controllers
         [HttpGet]
         public IActionResult RatingForm()
         {
+            var categories = movieContext.Categories.ToList();
+            ViewBag.categories = categories;
+
             return View();
         }
 
@@ -51,14 +55,65 @@ namespace Mission4.Controllers
             }
             else
             {
+                var categories = movieContext.Categories.ToList();
+                ViewBag.categories = categories;
                 return View();
             }
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpGet]
+        public IActionResult ViewAllMovies()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var movies = movieContext.Movies
+                .ToList();
+
+            return View(movies);
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int movieid)
+        {
+            // Still need to pull from all of the categories available.
+            var categories = movieContext.Categories.ToList();
+            ViewBag.categories = categories;
+
+            // Pull just the movie you're trying to edit.
+            var movie = movieContext.Movies.Single(x => x.Id == movieid);
+
+            return View("RatingForm", movie);
+        }
+        [HttpPost]
+        public IActionResult Edit(Movie m)
+        {
+            if (ModelState.IsValid)
+            {
+                movieContext.Update(m);
+                movieContext.SaveChanges();
+
+                return RedirectToAction("ViewAllMovies");
+            }
+            else
+            {
+                var categories = movieContext.Categories.ToList();
+                ViewBag.categories = categories;
+                return View("RatingForm", m);
+            }
+        }
+
+        [HttpGet]
+        public IActionResult Delete(int movieid)
+        {
+            // Pull just the movie you're trying to delete.
+            var movie = movieContext.Movies.Single(x => x.Id == movieid);
+            return View(movie);
+        }
+
+        [HttpPost]
+        public IActionResult Delete(Movie m)
+        {
+            movieContext.Movies.Remove(m);
+            movieContext.SaveChanges();
+            return RedirectToAction("ViewAllMovies");
         }
     }
 }

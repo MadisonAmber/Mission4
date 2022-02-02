@@ -6,8 +6,17 @@
 
 <div class="jumbotron text-center">
     <form method="post">
-        <label class="form-label" asp-for="Category">Category</label>
-        <input class="form-control" asp-for="Category" />
+        <div asp-validation-summary="All"></div>
+
+        <input type="hidden" asp-for="Id" />
+
+        <label class="form-label" asp-for="CategoryID">Category</label>
+        <select class="custom-select" asp-for="CategoryID">
+            @foreach (Category category in ViewBag.categories)
+            {
+                <option value="@category.CategoryID">@category.CategoryName</option>
+            }
+        </select>
 
         <label class="form-label" asp-for="Title">Title</label>
         <input class="form-control" asp-for="Title" />
